@@ -17,19 +17,44 @@ function buildMetadata(sample) {
     });
     // BONUS: Build the Gauge Chart
     // buildGauge(data.WFREQ);
-    
   });  
 }
 
 function buildCharts(sample) {
 
   // @TODO: Use `d3.json` to fetch the sample data for the plots
-
+  d3.json(`/samples/${sample}`).then((data) => {
+    const otu_ids = data.otu_ids;
+    const otu_labels = data.otu_labels;
+    const sample_values = data.sample_values;
+    console.log(otu_ids, otu_labels,sample_values);
     // @TODO: Build a Bubble Chart using the sample data
-
+    var bubblelayout = {
+      xaxis: { title: "OTU ID"}
+    };
+    var bubbledata = [{
+      x: otu_ids,
+      y: sample_values,
+      text: otu_labels,
+      mode: "markers",
+      marker: {
+        size: sample_values,
+        color: otu_ids,
+      }
+    }];
+    Plotly.newPlot("bubble", bubbledata, bubblelayout);
     // @TODO: Build a Pie Chart
     // HINT: You will need to use slice() to grab the top 10 sample_values,
     // otu_ids, and labels (10 each).
+    var piedata = [{
+      values: sample_values.slice(0,10),
+      labels: otu_ids.slice(0,10),
+      hovertext: otu_labels.slice(0,10),
+      type: "pie"
+    }];
+
+    Plotly.newPlot("pie", piedata)
+  });
 }
 
 function init() {
